@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import '../components/ImageCarousel/styles.css';
 import React from 'react';
 import { Provider } from 'react-redux';
 import type { AppProps } from 'next/app'
