@@ -6,7 +6,9 @@ module.exports = {
       test: /\.svg$/,
       use: ["@svgr/webpack"]
     });
-
     return config;
-  }
+  },
+  images: {
+    domains: ['picsum.photos'],
+  },
 }

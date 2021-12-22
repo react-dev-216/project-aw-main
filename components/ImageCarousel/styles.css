@@ -1,12 +1,31 @@
 .carousel-container {
   margin: 20px;
+  /* width: 545px; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-tools {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  top: 10px;
+  padding: 0 20px;
+  z-index: 1;
+}
+.selected-image-wrapper {
+  position: relative;
   width: 545px;
+  height: 545px;
+  margin: 0 0 15px 0 !important;
 }
 
 .selected-image {
-  width: 100%;
-  height: 500px;
-  margin-bottom: 8px;
+  width: 545px;
+  height: 545px;
+  /* margin: 0 0 15px 0 !important; */
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -47,7 +66,9 @@
   background-size: cover;
   cursor: pointer;
 }
-
+.carousel__button {
+  cursor: pointer;
+}
 .carousel__button-left {  
   transform: rotate(180deg);
   cursor: pointer;
@@ -61,4 +82,22 @@
 }
 .carousel__button-disabled path {
   stroke: #E5E5E5;
+}
+.tool-buttons-left {
+  display: flex;
+  align-items: center;
+}
+.tool-button {
+  /* width: 40px; */
+  height: 40px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(233, 233, 233, 0.6);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.zoom-in {
+  margin: 0 10px;
 }

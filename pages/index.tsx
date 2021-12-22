@@ -43,6 +43,8 @@ const Main = () => {
   const [type, setType] = useState('InTake');
   const [images, setImages] = useState<ImageType[]>();
   const [skuID, setSKUId] = useState<number>(0);
+
+  console.log('router=>', router)
   useEffect(() => {
     setImages(
       Array.from(Array(10).keys()).map((id) => ({
@@ -68,7 +70,7 @@ const Main = () => {
     >
       <Grid container sx={{display: 'flex', flexDirection:'column'}} alignItems="center">
         <Grid item container sx={{alignItems: 'center', mx:'20px', width: 545}}  justifyContent="space-between">
-          <Typography sx={{fontSize: 20, fontWeight:400, mb: '6px', mr:4, color:'#252733'}} >Item #{skuID}</Typography>
+          <Typography sx={{fontSize: 15, fontWeight:400, mb: '6px', mr:4, color:'#252733'}} >Item #{skuID}</Typography>
           <FormControl sx={{width: 175}} >
             <Select
               // native

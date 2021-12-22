@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from 'next/image';
+import { useRouter } from 'next/router'
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import NextArrow from '../../assets/svg/next.svg';
+import ZoonInSVG from '../../assets/svg/zoomin.svg';
+import ZoonOutSVG from '../../assets/svg/zoomout.svg';
+import {
+  Container, Box, Typography, Grid
+} from '@mui/material';
+
 export type ImageType = { id: number; url: string };
 
 const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
+  const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState<ImageType>();
+  const [focus, setFocus] = useState(false);
   const carouselItemsRef = useRef<HTMLDivElement[] | null[]>([]);
 
   useEffect(() => {
@@ -53,39 +63,88 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
     }
   };
 
+  const focusInCurrentTarget = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (event.relatedTarget === null) return false;    
+    var node = event.relatedTarget.parentNode;          
+    while (node !== null) {
+      if (node === event.currentTarget) return true;
+      node = node.parentNode;
+    }
+    return false;
+  }
+  const focusHandler = (event: React.FocusEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+    setFocus(true)
+  };
+  const blurHandler = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (!focusInCurrentTarget(event)) {
+      setFocus(false)
+    }
+  };
+  // if (selectedImage === undefined) return null;
   return (
-    <div className="carousel-container">
-      {/* <h2 className="header">Image Carousel</h2> */}
-      <div
-        className="selected-image"
-        style={{ backgroundImage: `url(${selectedImage?.url})` }}
-      />
-      <div className="carousel">
-        <NextArrow 
-          className={selectedImageIndex === 0 ?'carousel__button-left carousel__button-disabled' : 'carousel__button-left'} 
-          onClick={handleLeftClick}
-        />
-        <div className="carousel__images">
-          {images &&
-            images.map((image, idx) => (
-              <div
-                onClick={() => handleSelectedImageChange(idx)}
-                style={{ 
-                  backgroundImage: `url(${image.url})`, 
-                }}
-                key={image.id}
-                className={`carousel__image ${
-                  selectedImageIndex === idx && "carousel__image-selected"
-                }`}
-                ref={(el) => (carouselItemsRef.current[idx] = el)}
+    <div className="carousel-container" >
+      <TransformWrapper
+        initialScale={1}
+      >
+        {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
+          <>
+            <div className="selected-image-wrapper"  onMouseOver={focusHandler} onMouseOut={blurHandler}>
+              {focus && images &&
+                <Box className="image-tools" onMouseOver={focusHandler}>
+                  <div className="tool-buttons-left">
+                    <Typography sx={{mr: 2,fontSize: 15, fontWeight: 400, color:'black'}} >{`${selectedImageIndex} / ${images.length}`}</Typography>
+                    <span className="tool-button " onClick={() => zoomOut()}>
+                      <ZoonOutSVG />
+                    </span>
+                    <span className="tool-button zoom-in" onClick={() => zoomIn()}>
+                      <ZoonInSVG />
+                    </span>
+                  </div>
+                  <span className="tool-button" onClick={() => resetTransform()}>
+                    Download
+                  </span>                
+                </Box>
+              }
+              <TransformComponent>
+                <img 
+                  className="selected-image" 
+                  src={selectedImage?.url} 
+                  alt="hero-image"
+                  width={545}
+                  height={545}
+                />
+              </TransformComponent>
+            </div>
+            <div className="carousel">
+              <NextArrow 
+                className={selectedImageIndex === 0 ?'carousel__button-left carousel__button-disabled' : 'carousel__button-left'} 
+                onClick={()=>{resetTransform();handleLeftClick();}}      
               />
-            ))}
-        </div>
-        <NextArrow 
-          className={images && selectedImageIndex === images.length - 1 ? 'carousel__button-right carousel__button-disabled' : 'carousel__button-right'}
-          onClick={handleRightClick}
-        />
-      </div>
+              <div className="carousel__images">
+                {images &&
+                  images.map((image, idx) => (
+                    <div              
+                      onClick={() => {resetTransform();handleSelectedImageChange(idx);}}
+                      style={{ 
+                        backgroundImage: `url(${image.url})`, 
+                      }}
+                      key={image.id}
+                      className={`carousel__image ${
+                        selectedImageIndex === idx && "carousel__image-selected"
+                      }`}
+                      ref={(el) => (carouselItemsRef.current[idx] = el)}
+                    />
+                  ))}
+              </div>
+              <NextArrow 
+                className={images && selectedImageIndex === images.length - 1 ? 'carousel__button-right carousel__button-disabled' : 'carousel__button-right'}
+                onClick={()=>{resetTransform();handleRightClick();}}
+              />
+            </div>
+          </>
+        )}
+      </TransformWrapper>
     </div>
   );
 };
