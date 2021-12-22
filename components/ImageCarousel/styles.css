@@ -15,6 +15,7 @@
 .carousel {
   position: relative;
   display: flex;
+  align-items: center;
 }
 
 .carousel__images {
@@ -44,11 +45,20 @@
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+  cursor: pointer;
 }
 
 .carousel__button-left {  
   transform: rotate(180deg);
+  cursor: pointer;
+}
+.carousel__button-right {  
+  cursor: pointer;
 }
 
-.carousel__button-right {
+.carousel__button-disabled {
+  cursor: auto;
+}
+.carousel__button-disabled path {
+  stroke: #E5E5E5;
 }

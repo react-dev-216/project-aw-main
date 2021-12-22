@@ -34,7 +34,7 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
   };
 
   const handleRightClick = () => {
-    if (images && images.length > 0) {
+    if (images && images.length > 0 && selectedImageIndex < images.length - 1) {
       let newIdx = selectedImageIndex + 1;
       if (newIdx >= images.length) {
         newIdx = 0;
@@ -44,7 +44,7 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
   };
 
   const handleLeftClick = () => {
-    if (images && images.length > 0) {
+    if (images && images.length > 0 && selectedImageIndex > 0) {
       let newIdx = selectedImageIndex - 1;
       if (newIdx < 0) {
         newIdx = images.length - 1;
@@ -61,12 +61,8 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
         style={{ backgroundImage: `url(${selectedImage?.url})` }}
       />
       <div className="carousel">
-        <Image 
-          src={NextArrow} 
-          alt='pre'  
-          width={15} 
-          height={30} 
-          className="carousel__button-left" 
+        <NextArrow 
+          className={selectedImageIndex === 0 ?'carousel__button-left carousel__button-disabled' : 'carousel__button-left'} 
           onClick={handleLeftClick}
         />
         <div className="carousel__images">
@@ -85,12 +81,8 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
               />
             ))}
         </div>
-        <Image 
-          src={NextArrow} 
-          alt='next'  
-          width={15} 
-          height={30} 
-          className="carousel__button-right" 
+        <NextArrow 
+          className={images && selectedImageIndex === images.length - 1 ? 'carousel__button-right carousel__button-disabled' : 'carousel__button-right'}
           onClick={handleRightClick}
         />
       </div>
