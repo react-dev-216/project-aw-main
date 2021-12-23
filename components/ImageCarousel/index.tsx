@@ -8,11 +8,16 @@ import ZoonOutSVG from '../../assets/svg/zoomout.svg';
 import {
   Container, Box, Typography, Grid
 } from '@mui/material';
+import {
+  useAppDispatch,
+  useAppSelector,
+} from '../../redux/hooks';
 
-export type ImageType = { id: number; url: string };
+// export type ImageType = { url: string };
+export type ImageType = string;
 
 const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
-  const router = useRouter();
+  const router = useRouter();  
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState<ImageType>();
   const [focus, setFocus] = useState(false);
@@ -81,18 +86,20 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
       setFocus(false)
     }
   };
-  const handleDownload = (url)=> {
-    const img_url = selectedImage.url;
+  const handleDownload = ()=> {
+    if(!selectedImage) return;
+    const img_url = selectedImage;
     fetch(img_url, {
       method: "GET",
       headers: {}
     })
       .then(response => {
         response.arrayBuffer().then(function(buffer) {
+          const prefix = img_url.split('/').pop();
           const url = window.URL.createObjectURL(new Blob([buffer]));
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", `${selectedImage.id}-image.png`); 
+          link.setAttribute("download", `${prefix || 'download'}-image.png`); 
           document.body.appendChild(link);
           link.click();
         });
@@ -129,7 +136,7 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
               <TransformComponent>
                 <img 
                   className="selected-image" 
-                  src={selectedImage?.url} 
+                  src={selectedImage} 
                   alt="hero-image"
                   width={545}
                   height={545}
@@ -147,9 +154,9 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
                     <div              
                       onClick={() => {resetTransform();handleSelectedImageChange(idx);}}
                       style={{ 
-                        backgroundImage: `url(${image.url})`, 
+                        backgroundImage: `url(${image})`, 
                       }}
-                      key={image.id}
+                      key={`${idx}-photo`}
                       className={`carousel__image ${
                         selectedImageIndex === idx && "carousel__image-selected"
                       }`}

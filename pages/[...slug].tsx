@@ -5,15 +5,15 @@ import {
   useAppDispatch,
   useAppSelector,
 } from '../redux/hooks';
-import {
-  getUserInfo
-} from '../redux/reducers/user';
+import { getUserInfo } from '../redux/reducers/user';
+import { setMessage } from '../redux/reducers/album';
 import { styled } from '@mui/material/styles';
 import {
   Container, Box, Typography, Grid, TextField, Button,
   FormControl, InputLabel, Select, MenuItem, InputBase, Input
 } from '@mui/material';
 import ImageCarousel, { ImageType } from "../components/ImageCarousel";
+import { BASE_URL } from '../pages/api/constants';
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   'label + &': {
@@ -39,21 +39,53 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
 
 const Main = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const slug = router.query.slug || []
   const userInfo = useAppSelector(getUserInfo);
-  const [type, setType] = useState('InTake');
-  const [images, setImages] = useState<ImageType[]>();
-  const [skuID, setSKUId] = useState<number>(0);
+  const [type, setType] = useState(slug[1] || 'all');
+  const [images, setImages] = useState<any[]>();
+  const [imageUrls, setImageUrls] = useState<ImageType[]>();
+  const [skuID, setSKUId] = useState<string>(slug[0] || '1');
   useEffect(() => {
-    setImages(
-      Array.from(Array(10).keys()).map((id) => (
-         `https://picsum.photos/1000?random=${id}`
-      ))
-    );
-  }, []);
+    setType(slug[1] || 'all');
+    setSKUId(slug[0] || '1');
+    fetch(BASE_URL + '/photos' + router.asPath, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    }).then((res: any) => res.json())
+    .then((res_json: any) => {
+      if (res_json.errors && res_json.errors.length > 0) {
+        const error = res_json.errors[0]; 
+        dispatch(setMessage({type: 'error', text: error.message})); 
+      } else if (res_json.photoUrls) {
+        setImages(res_json.photoUrls);
+      }
+    })
+    .catch((err:any) => console.log('err=>', err))
+  }, [router]);
+
+  useEffect(() => {
+    if (images) {
+      const keys = Object.keys(images);
+      if(keys.length > 0) {
+        let tempList: ImageType[] = [];
+        if (type === 'all') {
+          for(let key of keys) {
+            tempList = [...tempList, ...(images as any)[key]];
+          }
+        } else {
+          if (keys.filter((key) => key === type).length > 0) {
+            tempList = [...tempList, ...(images as any)[type]];
+          }
+        }
+        setImageUrls(tempList);
+      }
+    }
+  },[images, type])
 
   const handleChange = (e:any) => {
-    setType(e.target.value);
+    // setType(e.target.value);
+    router.push(`/${skuID}/${e.target.value}`)
   }
   return (
     <Box
@@ -66,9 +98,10 @@ const Main = () => {
         backgroundColor: 'secondary.light'
       }}
     >
+      {imageUrls && imageUrls.length > 0 &&
       <Grid container sx={{display: 'flex', flexDirection:'column'}} alignItems="center">
         <Grid item container sx={{alignItems: 'center', mx:'20px', width: 545}}  justifyContent="space-between">
-          <Typography sx={{fontSize: 15, fontWeight:400, mr:4, color:'#252733'}} >Item #{skuID}</Typography>
+          <Typography sx={{fontSize: 15, fontWeight:400, mr:4, color:'#252733'}} >Item # {skuID.split('_')[0]}</Typography>
           <FormControl sx={{width: 175}} >
             <Select
               // native
@@ -88,17 +121,18 @@ const Main = () => {
                 padding: '12px 14px',
               }}
             >
-              <MenuItem value={'InTake'}>InTake</MenuItem>
-              <MenuItem value={'Whiter'}>Whiter</MenuItem>
-              <MenuItem value={'Rynek'}>Rynek</MenuItem>
-              <MenuItem value={'All'}>All</MenuItem>
+              <MenuItem value={'intake'}>InTake</MenuItem>
+              <MenuItem value={'whiter'}>Whiter</MenuItem>
+              <MenuItem value={'rynek'}>Rynek</MenuItem>
+              <MenuItem value={'all'}>All</MenuItem>
             </Select>
           </FormControl>
-        </Grid>
+        </Grid>        
         <Grid item>
-          <ImageCarousel images={images} />
+          <ImageCarousel images={imageUrls} />
         </Grid>
       </Grid>     
+      }
     </Box>
   )
 }

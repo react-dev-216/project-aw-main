@@ -4,10 +4,12 @@ import {
   ThunkAction,
 } from '@reduxjs/toolkit';
 import userReducer from './reducers/user';
+import albumReducer from './reducers/album';
 
 export const store = configureStore({
   reducer: {
-    user: userReducer
+    user: userReducer,
+    album: albumReducer
   },
 });
 
