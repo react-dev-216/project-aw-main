@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from 'next/image';
 import { useRouter } from 'next/router'
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import NextArrow from '../../assets/svg/next.svg';
 import ZoonInSVG from '../../assets/svg/zoomin.svg';
 import ZoonOutSVG from '../../assets/svg/zoomout.svg';
@@ -17,12 +18,41 @@ import {
 export type ImageType = string;
 
 const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
-  const router = useRouter();  
+  const router = useRouter();
+  const handleFullScreen = useFullScreenHandle();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState<ImageType>();
   const [focus, setFocus] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const carouselItemsRef = useRef<HTMLDivElement[] | null[]>([]);
 
+  useEffect(() => {
+    window.addEventListener("keypress", function(e) {
+      console.log('keypress=>',e)
+      if (e.keyCode === 13) {
+        // handleFullScreen.enter();
+      }
+    }, false);   
+
+    // document.addEventListener("fullscreenchange", function() {
+    //  console.log("fullscreenchange event fired!");
+    //   // handleFullScreen.enter();
+    // });
+    // /* Firefox */
+    // document.addEventListener("mozfullscreenchange", function() {
+    //   console.log("fullscreenchange event fired!");
+    // });
+
+    // /* Chrome, Safari and Opera */
+    // document.addEventListener("webkitfullscreenchange", function() {
+    //   console.log("fullscreenchange event fired!");
+    // });
+
+    // /* IE / Edge */
+    // document.addEventListener("msfullscreenchange", function() {
+    //   console.log("fullscreenchange event fired!");
+    // });
+  }, []);
   useEffect(() => {
     if (images && images[0]) {
       carouselItemsRef.current = carouselItemsRef.current.slice(
@@ -34,6 +64,11 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
       setSelectedImage(images[0]);
     }
   }, [images]);
+
+  useEffect(() => {
+   if (isFullScreen) handleFullScreen.enter();
+   else handleFullScreen.exit();
+  }, [isFullScreen]);
 
   const handleSelectedImageChange = (newIdx: number) => {
     if (images && images.length > 0) {
@@ -117,31 +152,50 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
         {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
           <>
             <div className="selected-image-wrapper"  onMouseOver={focusHandler} onMouseOut={blurHandler}>
-              {focus && images &&
-                <Box className="image-tools" onMouseOver={focusHandler}>
-                  <div className="tool-buttons-left">
-                    <Typography sx={{mr: 2,fontSize: 15, fontWeight: 400, color:'black'}} >{`${selectedImageIndex} / ${images.length}`}</Typography>
-                    <span className="tool-button " onClick={() => zoomOut()}>
-                      <ZoonOutSVG />
-                    </span>
-                    <span className="tool-button zoom-in" onClick={() => zoomIn()}>
-                      <ZoonInSVG />
-                    </span>
-                  </div>
-                  <span className="tool-button" onClick={() => handleDownload()}>
-                    Download
-                  </span>                
-                </Box>
-              }
-              <TransformComponent>
-                <img 
-                  className="selected-image" 
-                  src={selectedImage} 
-                  alt="hero-image"
-                  width={545}
-                  height={545}
-                />
-              </TransformComponent>
+              <FullScreen handle={handleFullScreen}>
+                {focus && images &&
+                  <>
+                    <Box className="image-tools" onMouseOver={focusHandler}>
+                      <div className="tool-buttons-left">
+                        <Typography sx={{mr: 2,fontSize: 15, fontWeight: 400, color:'black'}} >{`${selectedImageIndex} / ${images.length}`}</Typography>
+                        <span className="tool-button " onClick={() => zoomOut()}>
+                          <ZoonOutSVG />
+                        </span>
+                        <span className="tool-button zoom-in" onClick={() => zoomIn()}>
+                          <ZoonInSVG />
+                        </span>
+                        <span className="tool-button " onClick={()=> setIsFullScreen(!isFullScreen)}>
+                          Full Screen
+                        </span>
+                      </div>
+                      <span className="tool-button" onClick={() => handleDownload()}>
+                        Download
+                      </span>                
+                    </Box>
+                    {handleFullScreen.active &&
+                      <>
+                        <NextArrow 
+                          className={selectedImageIndex === 0 ?'carousel__button-left carousel__button-disabled' : 'carousel__button-left'} 
+                          onClick={()=>{resetTransform();handleLeftClick();}}      
+                        />
+                        <NextArrow 
+                          className={images && selectedImageIndex === images.length - 1 ? 'carousel__button-right carousel__button-disabled' : 'carousel__button-right'}
+                          onClick={()=>{resetTransform();handleRightClick();}}
+                        />
+                      </>
+                    }
+                  </>
+                }
+                <TransformComponent>              
+                  <img 
+                    className={`${handleFullScreen.active ? 'fill-window' : 'selected-image'}`} 
+                    src={selectedImage} 
+                    alt="hero-image"
+                    width={545}
+                    height={545}
+                  />
+                </TransformComponent>
+              </FullScreen>
             </div>
             <div className="carousel">
               <NextArrow 

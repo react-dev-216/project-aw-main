@@ -73,6 +73,7 @@
   transform: rotate(180deg);
   cursor: pointer;
 }
+
 .carousel__button-right {  
   cursor: pointer;
 }
@@ -81,7 +82,7 @@
   cursor: auto;
 }
 .carousel__button-disabled path {
-  stroke: #E5E5E5;
+  stroke: #E5E5E5 !important;
 }
 .tool-buttons-left {
   display: flex;
@@ -100,4 +101,31 @@
 }
 .zoom-in {
   margin: 0 10px;
+}
+.fill-window {
+  /* position: absolute; */
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  object-fit: contain;
+  background-color: white;
+}
+.fullscreen-enabled .selected-image {
+  background: #fff;
+}
+.fullscreen-enabled .carousel__button-left {  
+  position: absolute;
+  top: calc(50% - 10px);
+  left: 20px;
+  z-index: 1;
+}
+.fullscreen-enabled .carousel__button-right {  
+  position: absolute;
+  top: calc(50% - 10px);
+  right: 20px;
+  z-index: 1;
+}
+.fullscreen-enabled path {  
+  stroke: #3b1616;
 }
