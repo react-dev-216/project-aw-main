@@ -63,24 +63,44 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
     }
   };
 
-  const focusInCurrentTarget = (event: React.FocusEvent<HTMLInputElement>) => {
+  const focusInCurrentTarget = (event: any) => {
     if (event.relatedTarget === null) return false;    
-    var node = event.relatedTarget.parentNode;          
+    let node = event.relatedTarget.parentNode || null;          
     while (node !== null) {
       if (node === event.currentTarget) return true;
       node = node.parentNode;
     }
     return false;
   }
-  const focusHandler = (event: React.FocusEvent<HTMLInputElement>) => {
+  const focusHandler = (event: any) => {
     event.stopPropagation();
     setFocus(true)
   };
-  const blurHandler = (event: React.FocusEvent<HTMLInputElement>) => {
+  const blurHandler = (event: any) => {
     if (!focusInCurrentTarget(event)) {
       setFocus(false)
     }
   };
+  const handleDownload = (url)=> {
+    const img_url = selectedImage.url;
+    fetch(img_url, {
+      method: "GET",
+      headers: {}
+    })
+      .then(response => {
+        response.arrayBuffer().then(function(buffer) {
+          const url = window.URL.createObjectURL(new Blob([buffer]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", `${selectedImage.id}-image.png`); 
+          document.body.appendChild(link);
+          link.click();
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
   // if (selectedImage === undefined) return null;
   return (
     <div className="carousel-container" >
@@ -101,7 +121,7 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
                       <ZoonInSVG />
                     </span>
                   </div>
-                  <span className="tool-button" onClick={() => resetTransform()}>
+                  <span className="tool-button" onClick={() => handleDownload()}>
                     Download
                   </span>                
                 </Box>
