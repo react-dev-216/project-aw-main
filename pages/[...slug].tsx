@@ -95,7 +95,7 @@ const Main = () => {
         alignItems: 'center',
         height: '100vh',
         p:4,
-        backgroundColor: 'secondary.light'
+        backgroundColor: 'white'
       }}
     >
       {imageUrls && imageUrls.length > 0 &&

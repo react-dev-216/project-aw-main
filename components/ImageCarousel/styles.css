@@ -20,8 +20,17 @@
   width: 545px;
   height: 545px;
   margin: 0 0 15px 0 !important;
+  cursor: none;
 }
-
+.fullscreen-image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  cursor: default;
+  z-index: 1;
+}
 .selected-image {
   width: 545px;
   height: 545px;
@@ -47,14 +56,14 @@
 
 .carousel__image-selected {
   position: relative;
-  border: 3px solid #ffa700 !important;  
+  /* border: 3px solid #ffa700 !important;   */
 }
 .carousel__image-selected::after {
   content: '';
   position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9));
 }
 
 .carousel__image {
@@ -103,7 +112,8 @@
   margin: 0 10px;
 }
 .fill-window {
-  /* position: absolute; */
+  /* position: fixed; */
+  top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
@@ -111,21 +121,19 @@
   object-fit: contain;
   background-color: white;
 }
-.fullscreen-enabled .selected-image {
-  background: #fff;
-}
-.fullscreen-enabled .carousel__button-left {  
+.full-screen-carousel__button-left {  
   position: absolute;
   top: calc(50% - 10px);
   left: 20px;
   z-index: 1;
+  transform: rotate(180deg);
+  cursor: pointer;
 }
-.fullscreen-enabled .carousel__button-right {  
+.full-screen-carousel__button-right {  
   position: absolute;
   top: calc(50% - 10px);
   right: 20px;
   z-index: 1;
+  cursor: pointer;
 }
-.fullscreen-enabled path {  
-  stroke: #3b1616;
-}
+

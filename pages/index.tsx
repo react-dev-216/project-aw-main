@@ -63,7 +63,7 @@ const Main = () => {
         alignItems: 'center',
         height: '100vh',
         p:4,
-        backgroundColor: 'secondary.light'
+        backgroundColor: 'white'
       }}
     >
       <Grid container sx={{display: 'flex', flexDirection:'column'}} alignItems="center">
