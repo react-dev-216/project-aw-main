@@ -48,7 +48,6 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
     const intervalID = setInterval(()=> {
       const checkingTime = new Date()
       const later = checkingTime.getTime();
-      console.log('check', tick, later)
       if(later - tick > 5000) setFocus(false);
     }, 1000)
     return(()=> {
