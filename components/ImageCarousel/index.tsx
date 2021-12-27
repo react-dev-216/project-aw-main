@@ -163,7 +163,6 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
     }
   }
   // if (selectedImage === undefined) return null;
-  console.log(isFullScreen)
   return (
     <div className="carousel-container" >
       <TransformWrapper
