@@ -188,7 +188,7 @@ const ImageCarousel: React.FC<{ images?: ImageType[] }> = ({ images }) => {
                   <>
                     <Box className="image-tools" >
                       <div className="tool-buttons-left">
-                        <Typography sx={{mr: 2,fontSize: 15, fontWeight: 400, color:'black'}} >{`${selectedImageIndex} / ${images.length}`}</Typography>
+                        <Typography sx={{mr: 2,fontSize: 15, fontWeight: 400, color:'black'}} >{`${selectedImageIndex + 1} / ${images.length}`}</Typography>
                         {isZoomIn ?
                         <span className="tool-button " onClick={handleZoomOutClick(zoomOut)} onMouseMove={(e)=>{e.stopPropagation();setZoomCursor(false)}}>
                           <ZoonOutSVG />
