@@ -58,7 +58,8 @@ const Main = () => {
         const error = res_json.errors[0]; 
         dispatch(setMessage({type: 'error', text: error.message})); 
       } else if (res_json.photoUrls) {
-        setImages(res_json.photoUrls);
+        if (res_json.photoUrls.length > 0) setImages(res_json.photoUrls);
+        else dispatch(setMessage({type: 'error', text: 'No photos from current url! please check the valid url'}));
       }
     })
     .catch((err:any) => console.log('err=>', err))
