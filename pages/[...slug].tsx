@@ -43,7 +43,7 @@ const Main = () => {
   const slug = router.query.slug || []
   const userInfo = useAppSelector(getUserInfo);
   const [type, setType] = useState(slug[1] || 'all');
-  const [images, setImages] = useState<any[]>(null);
+  const [images, setImages] = useState<any[]>();
   const [imageUrls, setImageUrls] = useState<ImageType[]>();
   const [skuID, setSKUId] = useState<string>(slug[0] || '1');
   useEffect(() => {
