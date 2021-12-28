@@ -43,10 +43,11 @@ const Main = () => {
   const slug = router.query.slug || []
   const userInfo = useAppSelector(getUserInfo);
   const [type, setType] = useState(slug[1] || 'all');
-  const [images, setImages] = useState<any[]>();
+  const [images, setImages] = useState<any[]>(null);
   const [imageUrls, setImageUrls] = useState<ImageType[]>();
   const [skuID, setSKUId] = useState<string>(slug[0] || '1');
   useEffect(() => {
+    if (!slug[1] || !slug[0] ) return;
     setType(slug[1] || 'all');
     setSKUId(slug[0] || '1');
     fetch(BASE_URL + '/photos' + router.asPath, {
@@ -54,12 +55,12 @@ const Main = () => {
       headers: { 'Content-Type': 'application/json' },
     }).then((res: any) => res.json())
     .then((res_json: any) => {
+      // console.log(res_json, res_json.photoUrls)
       if (res_json.errors && res_json.errors.length > 0) {
         const error = res_json.errors[0]; 
         dispatch(setMessage({type: 'error', text: error.message})); 
       } else if (res_json.photoUrls) {
-        if (res_json.photoUrls.length > 0) setImages(res_json.photoUrls);
-        else dispatch(setMessage({type: 'error', text: 'No photos from current url! please check the valid url'}));
+        setImages(res_json.photoUrls);          
       }
     })
     .catch((err:any) => console.log('err=>', err))
